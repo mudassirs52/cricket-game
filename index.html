@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mudassir Cricket Erena</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-primary: #0c0e14;
+  --bg-secondary: #12151e;
+  --bg-card: #181c28;
+  --accent-gold: #e8b84b;
+  --accent-red: #d94f4f;
+  --accent-blue: #4a7fd4;
+  --accent-green: #4caf72;
+  --text-primary: #eef0f5;
+  --text-muted: #5a6070;
+  --text-dim: #8892a0;
+  --border-subtle: rgba(255,255,255,0.07);
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-ui: 'Barlow Condensed', sans-serif;
+}
+
+body {
+  background: var(--bg-primary);
+  font-family: var(--font-ui);
+  min-height: 100vh;
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+#root { width: 100%; }
+
+.shell {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 12px 12px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.masthead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 6px 2px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.masthead-title {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  color: var(--accent-gold);
+  letter-spacing: 3px;
+}
+.masthead-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.scorepanel {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.score-cell {
+  padding: 12px 10px;
+  text-align: center;
+  border-right: 1px solid var(--border-subtle);
+}
+.score-cell:last-child { border-right: none; }
+.sc-label {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  display: block;
+  margin-bottom: 4px;
+}
+.sc-val {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--accent-gold);
+}
+.sc-val.danger { color: var(--accent-red); }
+.sc-val.safe   { color: var(--accent-green); }
+.sc-val.info   { color: var(--accent-blue); }
+
+.ball-track {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 2px;
+}
+.bt-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.bt-dots { display: flex; gap: 5px; flex-wrap: wrap; }
+.bt-dot {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: #1e2230;
+  border: 1px solid #2e3448;
+  transition: background 0.25s, border-color 0.25s;
+}
+.bt-dot.done { background: var(--accent-gold); border-color: var(--accent-gold); }
+.bt-dot.out  { background: var(--accent-red);  border-color: var(--accent-red); }
+
+.scene-frame {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  height: 210px;
+  background: #0a0c10;
+}
+.scene-sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(170deg, #080d1a 0%, #0e1e38 45%, #163060 100%);
+}
+.scene-stands {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 52px;
+  overflow: hidden;
+}
+.scene-ground {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 160px;
+}
+.ground-grass {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(175deg, #165c25 0%, #1e7a30 55%, #196828 100%);
+}
+.ground-grass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    175deg,
+    transparent 0px, transparent 14px,
+    rgba(0,0,0,0.06) 14px, rgba(0,0,0,0.06) 28px
+  );
+}
+.ground-pitch {
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 62px; height: 160px;
+  background: linear-gradient(180deg, #c0965a 0%, #a87c42 100%);
+  border-left: 1px solid rgba(0,0,0,0.15);
+  border-right: 1px solid rgba(0,0,0,0.15);
+}
+.ground-crease {
+  position: absolute;
+  bottom: 22px; left: 50%;
+  transform: translateX(-50%);
+  width: 80px; height: 2px;
+  background: rgba(255,255,255,0.5);
+}
+.cricket-ball {
+  position: absolute;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #e05050, #9b2020);
+  box-shadow: 0 0 5px rgba(160,30,30,0.5);
+  z-index: 4;
+}
+
+.outcome-flash {
+  position: absolute;
+  top: 45%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: 3rem;
+  letter-spacing: 3px;
+  pointer-events: none;
+  z-index: 10;
+  animation: flashAnim 1.4s ease-out forwards;
+  text-shadow: 0 0 24px currentColor, 0 2px 6px rgba(0,0,0,0.9);
+}
+.outcome-flash.col-w   { color: var(--accent-red); }
+.outcome-flash.col-0   { color: #607080; }
+.outcome-flash.col-run { color: var(--accent-green); }
+.outcome-flash.col-4   { color: var(--accent-gold); }
+.outcome-flash.col-6   { color: #f0a030; }
+
+@keyframes flashAnim {
+  0%   { opacity: 0; transform: translate(-50%, -40%) scale(0.4); }
+  18%  { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+  65%  { opacity: 1; transform: translate(-50%, -55%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -75%) scale(0.85); }
+}
+
+.commentary-strip {
+  background: var(--bg-card);
+  border-left: 3px solid var(--accent-gold);
+  padding: 9px 14px;
+  border-radius: 0 5px 5px 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  letter-spacing: 0.3px;
+  min-height: 38px;
+  font-style: italic;
+}
+
+.controls-block { display: flex; flex-direction: column; gap: 10px; }
+
+.style-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.style-tile {
+  padding: 13px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  border: 2px solid transparent;
+  transition: all 0.18s ease;
+  text-align: left;
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+.style-tile:disabled { opacity: 0.35; cursor: not-allowed; }
+.style-tile .tile-sub {
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  opacity: 0.65;
+  display: block;
+  margin-top: 2px;
+}
+.style-tile.agg { border-color: rgba(217,79,79,0.3); }
+.style-tile.agg.selected {
+  background: rgba(180,40,40,0.18);
+  border-color: var(--accent-red);
+  box-shadow: 0 0 14px rgba(217,79,79,0.25);
+}
+.style-tile.def { border-color: rgba(74,127,212,0.3); }
+.style-tile.def.selected {
+  background: rgba(40,80,180,0.18);
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 14px rgba(74,127,212,0.25);
+}
+
+.powerbar-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 12px 14px;
+}
+.pb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.pb-title {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 3px;
+  color: var(--text-muted);
+}
+.pb-pos {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-gold);
+  letter-spacing: 1px;
+}
+.pb-track {
+  position: relative;
+  height: 42px;
+  margin-bottom: 14px;
+}
+.pb-segments {
+  display: flex;
+  height: 100%;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.pb-seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.88);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+  min-width: 8px;
+  transition: filter 0.15s;
+}
+.pb-seg:hover { filter: brightness(1.25); }
+.pb-seg .seg-pct {
+  font-family: var(--font-ui);
+  font-size: 0.55rem;
+  font-weight: 500;
+  opacity: 0.75;
+  letter-spacing: 0.5px;
+}
+.pb-seg.s-w { background: linear-gradient(180deg, #c03030, #8a1a1a); }
+.pb-seg.s-0 { background: linear-gradient(180deg, #454a5e, #2e3244); }
+.pb-seg.s-1 { background: linear-gradient(180deg, #2e6098, #1c3d6a); }
+.pb-seg.s-2 { background: linear-gradient(180deg, #2e7a50, #1c5234); }
+.pb-seg.s-3 { background: linear-gradient(180deg, #6030a0, #3e1c70); }
+.pb-seg.s-4 { background: linear-gradient(180deg, #b05020, #7a3010); }
+.pb-seg.s-6 { background: linear-gradient(180deg, #907010, #604800); }
+
+.pb-slider {
+  position: absolute;
+  top: -7px;
+  width: 3px; height: 56px;
+  background: #fff;
+  border-radius: 2px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 5;
+  box-shadow: 0 0 6px rgba(255,255,255,0.7);
+}
+.pb-slider::before {
+  content: '';
+  position: absolute;
+  top: -6px; left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 7px solid #fff;
+}
+.pb-ticks {
+  position: relative;
+  height: 16px;
+}
+.pb-tick {
+  position: absolute;
+  font-size: 0.52rem;
+  color: var(--text-muted);
+  transform: translateX(-50%);
+  top: 0;
+  letter-spacing: 0.3px;
+}
+
+.action-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+.btn-play {
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #c0940e, #e8b84b);
+  color: #0c0e14;
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  letter-spacing: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 3px 14px rgba(232,184,75,0.25);
+}
+.btn-play:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(232,184,75,0.4);
+}
+.btn-play:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+.btn-restart {
+  padding: 14px 18px;
+  background: var(--bg-card);
+  color: var(--text-dim);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn-restart:hover {
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+  background: rgba(217,79,79,0.08);
+}
+
+.statusline {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.gameover-veil {
+  position: fixed;
+  inset: 0;
+  background: rgba(8,10,16,0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: veilIn 0.4s ease;
+}
+@keyframes veilIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.gameover-panel {
+  background: var(--bg-card);
+  border: 1px solid rgba(232,184,75,0.35);
+  border-radius: 10px;
+  padding: 36px 32px;
+  width: 90%;
+  max-width: 380px;
+  text-align: center;
+  box-shadow: 0 0 60px rgba(232,184,75,0.1);
+  animation: panelUp 0.4s ease;
+}
+@keyframes panelUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.go-heading {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  color: var(--accent-gold);
+  letter-spacing: 5px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.go-reason {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 26px;
+}
+.go-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.go-stat {
+  background: rgba(255,255,255,0.04);
+  border-radius: 6px;
+  padding: 12px 8px;
+}
+.go-stat-label {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  display: block;
+  margin-bottom: 4px;
+}
+.go-stat-val {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  color: var(--accent-gold);
+}
+.go-rating {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 2px;
+  color: var(--accent-green);
+  padding: 10px;
+  background: rgba(76,175,114,0.1);
+  border-radius: 5px;
+  margin-bottom: 22px;
+}
+.go-restart {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #c0940e, #e8b84b);
+  color: #0c0e14;
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  letter-spacing: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.go-restart:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(232,184,75,0.35);
+}
+
+@media (max-width: 480px) {
+  .masthead-title { font-size: 1.6rem; }
+  .sc-val         { font-size: 1.5rem; }
+  .scene-frame    { height: 175px; }
+  .action-row     { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const { useState, useEffect, useRef } = React;
+
+const MAX_BALLS   = 12;
+const MAX_WICKETS = 2;
+
+const PROB_AGG = [
+  { key: 'W', label: 'OUT', prob: 0.40, cls: 's-w' },
+  { key: '0', label: '0',   prob: 0.10, cls: 's-0' },
+  { key: '1', label: '1',   prob: 0.10, cls: 's-1' },
+  { key: '2', label: '2',   prob: 0.10, cls: 's-2' },
+  { key: '3', label: '3',   prob: 0.05, cls: 's-3' },
+  { key: '4', label: '4',   prob: 0.10, cls: 's-4' },
+  { key: '6', label: '6',   prob: 0.15, cls: 's-6' },
+];
+
+const PROB_DEF = [
+  { key: 'W', label: 'OUT', prob: 0.15, cls: 's-w' },
+  { key: '0', label: '0',   prob: 0.25, cls: 's-0' },
+  { key: '1', label: '1',   prob: 0.30, cls: 's-1' },
+  { key: '2', label: '2',   prob: 0.15, cls: 's-2' },
+  { key: '3', label: '3',   prob: 0.08, cls: 's-3' },
+  { key: '4', label: '4',   prob: 0.05, cls: 's-4' },
+  { key: '6', label: '6',   prob: 0.02, cls: 's-6' },
+];
+
+const COMMENTARY_BANK = {
+  W: [
+    'Bowled! The middle stump is completely uprooted.',
+    'Caught behind — the batsman edges straight to the keeper.',
+    'LBW! Plumb in front, no question about that decision.',
+  ],
+  '0': [
+    'Solid defence, plays it back down the pitch.',
+    'Dot ball. Batsman works hard to keep it out.',
+    'Watchful block. The pressure is building over by over.',
+  ],
+  '1': [
+    'Pushed into the gap, a comfortable single taken.',
+    'Quick feet — rotates the strike for one run.',
+    'Gentle nudge, they jog through for a single.',
+  ],
+  '2': [
+    'Driven hard, they turn and run a second.',
+    'Good placement through the covers, two added.',
+    'Threaded through mid-wicket for a couple.',
+  ],
+  '3': [
+    'Three runs — outstanding placement into the outfield.',
+    'Hard running between the wickets, three taken.',
+    'Excellent footwork, three more on the board.',
+  ],
+  '4': [
+    'BOUNDARY! Cracked through the covers to the rope.',
+    'FOUR! Perfectly timed drive, races away to the fence.',
+    'FOUR! Flicked off the pads — no chance for the fielder.',
+  ],
+  '6': [
+    'SIX! Massive strike — ball disappears into the stands.',
+    'SIX! Maximum! The crowd rises as one.',
+    'SIX! Cleared the boundary rope with plenty to spare.',
+  ],
+};
+
+function pickCommentary(key) {
+  const pool = COMMENTARY_BANK[key] || COMMENTARY_BANK['0'];
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function resolveOutcome(pos, probs) {
+  let acc = 0;
+  for (const p of probs) {
+    acc += p.prob;
+    if (pos <= acc + 1e-9) return p.key;
+  }
+  return probs[probs.length - 1].key;
+}
+
+function buildSegments(probs) {
+  let acc = 0;
+  return probs.map(p => {
+    const start = acc;
+    acc += p.prob;
+    return { ...p, start, end: acc };
+  });
+}
+
+function rateInnings(runs, balls) {
+  if (balls === 0) return 'NO BALLS FACED';
+  const sr = (runs / balls) * 100;
+  if (sr >= 160) return 'LEGENDARY INNINGS';
+  if (sr >= 125) return 'BRILLIANT BATTING';
+  if (sr >= 90)  return 'SOLID PERFORMANCE';
+  if (sr >= 55)  return 'STEADY KNOCK';
+  return 'DIFFICULT INNINGS';
+}
+
+function getFlashClass(key) {
+  if (key === 'W') return 'col-w';
+  if (key === '0') return 'col-0';
+  if (key === '4') return 'col-4';
+  if (key === '6') return 'col-6';
+  return 'col-run';
+}
+
+function getFlashLabel(key) {
+  if (key === 'W') return 'OUT';
+  if (key === '4') return 'FOUR';
+  if (key === '6') return 'SIX';
+  if (key === '0') return 'DOT';
+  return key + (key === '1' ? ' RUN' : ' RUNS');
+}
+
+function StandsCrowd() {
+  const palette = ['#c0392b','#2980b9','#27ae60','#e8b84b','#8e44ad','#d35400','#16a085'];
+  return (
+    <div className="scene-stands">
+      <svg width="100%" height="52" preserveAspectRatio="none">
+        {[0,1,2].map(row =>
+          Array.from({ length: 90 }).map((_, i) => {
+            const cx = i * 10 + (row % 2) * 4;
+            const cy = 12 + row * 13;
+            const col = palette[(i * 3 + row * 7) % palette.length];
+            return (
+              <g key={`${row}-${i}`}>
+                <ellipse cx={cx} cy={cy}   rx="4" ry="6" fill={col} opacity="0.75"/>
+                <ellipse cx={cx} cy={cy-7} rx="3" ry="3" fill="#f5d0a9" opacity="0.6"/>
+              </g>
+            );
+          })
+        )}
+        <rect x="0" y="48" width="100%" height="4" fill="#1a2030" opacity="0.8"/>
+      </svg>
+    </div>
+  );
+}
+
+function BatsmanFigure({ hitting }) {
+  return (
+    <svg
+      viewBox="0 0 60 95"
+      width="58" height="92"
+      style={{
+        position: 'absolute',
+        bottom: 16,
+        left: '26%',
+        zIndex: 3,
+        animation: hitting ? 'swingAnim 0.45s ease-out' : 'none',
+      }}
+    >
+      <style>{`
+        @keyframes swingAnim {
+          0%   { transform: rotate(0deg);   transform-origin: 50% 80%; }
+          25%  { transform: rotate(-12deg); transform-origin: 50% 80%; }
+          55%  { transform: rotate(18deg);  transform-origin: 50% 80%; }
+          100% { transform: rotate(0deg);   transform-origin: 50% 80%; }
+        }
+      `}</style>
+      <ellipse cx="30" cy="13" rx="10" ry="10" fill="#1b3d60"/>
+      <rect x="20" y="17" width="20" height="5" rx="2" fill="#2a5a90"/>
+      <ellipse cx="30" cy="24" rx="7" ry="6" fill="#e8a070"/>
+      <rect x="21" y="30" width="18" height="24" rx="3" fill="#1e6640"/>
+      <line x1="39" y1="33" x2="52" y2="45" stroke="#e8a070" strokeWidth="4" strokeLinecap="round"/>
+      <rect x="49" y="40" width="5" height="26" rx="2" fill="#c8900a" transform="rotate(-18,51,53)"/>
+      <line x1="21" y1="35" x2="10" y2="46" stroke="#e8a070" strokeWidth="4" strokeLinecap="round"/>
+      <rect x="21" y="54" width="9" height="24" rx="3" fill="#d8e8f0"/>
+      <rect x="31" y="54" width="9" height="24" rx="3" fill="#d8e8f0"/>
+      <rect x="19" y="60" width="11" height="18" rx="2" fill="white" opacity="0.55"/>
+      <rect x="30" y="60" width="11" height="18" rx="2" fill="white" opacity="0.55"/>
+      <ellipse cx="24" cy="79" rx="7" ry="4" fill="#1e2030"/>
+      <ellipse cx="36" cy="79" rx="7" ry="4" fill="#1e2030"/>
+      <circle cx="52" cy="45" r="4" fill="#1e2030"/>
+      <circle cx="10" cy="46" r="4" fill="#1e2030"/>
+    </svg>
+  );
+}
+
+function WicketsSet({ offsetX, bottomPx, scale }) {
+  const w = 34 * scale;
+  const h = 58 * scale;
+  return (
+    <svg
+      viewBox="0 0 34 58"
+      width={w} height={h}
+      style={{ position: 'absolute', left: offsetX, bottom: bottomPx, zIndex: 2 }}
+    >
+      <rect x="4"  y="6"  width="3" height="48" fill="#ddd0a8" rx="1"/>
+      <rect x="15" y="6"  width="3" height="48" fill="#ddd0a8" rx="1"/>
+      <rect x="26" y="6"  width="3" height="48" fill="#ddd0a8" rx="1"/>
+      <rect x="2"  y="4"  width="13" height="4" fill="#b89850" rx="1"/>
+      <rect x="19" y="4"  width="13" height="4" fill="#b89850" rx="1"/>
+    </svg>
+  );
+}
+
+function PowerBarDisplay({ segs, sliderPos }) {
+  return (
+    <div className="pb-track">
+      <div className="pb-segments">
+        {segs.map((s, i) => (
+          <div
+            key={i}
+            className={`pb-seg ${s.cls}`}
+            style={{ width: (s.prob * 100) + '%' }}
+            title={`${s.label}: ${(s.prob * 100).toFixed(0)}%`}
+          >
+            {s.prob >= 0.07 && (
+              <>
+                <span>{s.label}</span>
+                <span className="seg-pct">{(s.prob * 100).toFixed(0)}%</span>
+              </>
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="pb-slider" style={{ left: (sliderPos * 100) + '%' }}/>
+    </div>
+  );
+}
+
+function App() {
+  const [runs,        setRuns]        = useState(0);
+  const [wickets,     setWickets]     = useState(0);
+  const [ballsPlayed, setBallsPlayed] = useState(0);
+  const [style,       setStyle]       = useState('agg');
+  const [sliderPos,   setSliderPos]   = useState(0);
+  const [phase,       setPhase]       = useState('idle');
+  const [ballX,       setBallX]       = useState(50);
+  const [ballY,       setBallY]       = useState(5);
+  const [hitting,     setHitting]     = useState(false);
+  const [flash,       setFlash]       = useState(null);
+  const [flashKey,    setFlashKey]    = useState(0);
+  const [commentary,  setCommentary]  = useState('Select batting style and play your shot.');
+  const [history,     setHistory]     = useState([]);
+  const [gameOver,    setGameOver]    = useState(false);
+  const [goReason,    setGoReason]    = useState('');
+
+  const sliderValRef  = useRef(0);
+  const sliderDirRef  = useRef(1);
+  const rafSliderRef  = useRef(null);
+  const rafBallRef    = useRef(null);
+  const isRunningRef  = useRef(false);
+
+  const probs = style === 'agg' ? PROB_AGG : PROB_DEF;
+  const segs  = buildSegments(probs);
+
+  function startSlider() {
+    isRunningRef.current = true;
+    const tick = () => {
+      if (!isRunningRef.current) return;
+      sliderValRef.current += 0.007 * sliderDirRef.current;
+      if (sliderValRef.current >= 1) { sliderValRef.current = 1; sliderDirRef.current = -1; }
+      if (sliderValRef.current <= 0) { sliderValRef.current = 0; sliderDirRef.current =  1; }
+      setSliderPos(sliderValRef.current);
+      rafSliderRef.current = requestAnimationFrame(tick);
+    };
+    rafSliderRef.current = requestAnimationFrame(tick);
+  }
+
+  function stopSlider() {
+    isRunningRef.current = false;
+    cancelAnimationFrame(rafSliderRef.current);
+  }
+
+  useEffect(() => {
+    startSlider();
+    return () => stopSlider();
+  }, []);
+
+  function moveBall(x0, y0, x1, y1, duration, onDone) {
+    const t0 = performance.now();
+    const step = (now) => {
+      const raw    = Math.min((now - t0) / duration, 1);
+      const eased  = raw < 0.5 ? 2 * raw * raw : -1 + (4 - 2 * raw) * raw;
+      setBallX(x0 + (x1 - x0) * eased);
+      setBallY(y0 + (y1 - y0) * eased);
+      if (raw < 1) {
+        rafBallRef.current = requestAnimationFrame(step);
+      } else {
+        onDone();
+      }
+    };
+    rafBallRef.current = requestAnimationFrame(step);
+  }
+
+  function shotDestination(key) {
+    const xMap = { W: 50,  '0': 52,  '1': 62, '2': 72, '3': 80, '4': 92, '6': 88 };
+    const yMap = { W: 78,  '0': 72,  '1': 55,  '2': 40,  '3': 25,  '4': 8,  '6': 5  };
+    return { tx: xMap[key] ?? 60, ty: yMap[key] ?? 50 };
+  }
+
+  function handlePlayShot() {
+    if (phase !== 'idle' || gameOver) return;
+
+    stopSlider();
+    const capturedPos = sliderValRef.current;
+    const outcome     = resolveOutcome(capturedPos, probs);
+
+    setPhase('bowling');
+
+    moveBall(50, 5, 50, 78, 500, () => {
+      const { tx, ty } = shotDestination(outcome);
+      moveBall(50, 78, tx, ty, 420, () => {
+        setHitting(true);
+        setTimeout(() => setHitting(false), 450);
+
+        setCommentary(pickCommentary(outcome));
+        setFlash({ label: getFlashLabel(outcome), cls: getFlashClass(outcome) });
+        setFlashKey(k => k + 1);
+
+        let updatedRuns    = runs;
+        let updatedWickets = wickets;
+        const updatedBalls = ballsPlayed + 1;
+        const updatedHist  = [...history];
+
+        if (outcome === 'W') {
+          updatedWickets = wickets + 1;
+          updatedHist.push('out');
+        } else {
+          updatedRuns = runs + parseInt(outcome, 10);
+          updatedHist.push('done');
+        }
+
+        setRuns(updatedRuns);
+        setWickets(updatedWickets);
+        setBallsPlayed(updatedBalls);
+        setHistory(updatedHist);
+
+        setTimeout(() => {
+          setFlash(null);
+          if (updatedWickets >= MAX_WICKETS) {
+            setGoReason('All wickets lost');
+            setGameOver(true);
+            setPhase('over');
+          } else if (updatedBalls >= MAX_BALLS) {
+            setGoReason('Overs completed');
+            setGameOver(true);
+            setPhase('over');
+          } else {
+            setBallX(50);
+            setBallY(5);
+            setPhase('idle');
+            startSlider();
+          }
+        }, 1300);
+      });
+    });
+  }
+
+  function handleRestart() {
+    stopSlider();
+    cancelAnimationFrame(rafBallRef.current);
+
+    setRuns(0);
+    setWickets(0);
+    setBallsPlayed(0);
+    setStyle('agg');
+    setBallX(50);
+    setBallY(5);
+    setHitting(false);
+    setFlash(null);
+    setHistory([]);
+    setGameOver(false);
+    setGoReason('');
+    setPhase('idle');
+    setCommentary('New innings started. Select style and play your shot.');
+
+    sliderValRef.current = 0;
+    sliderDirRef.current = 1;
+    startSlider();
+  }
+
+  const currentOver = Math.floor(ballsPlayed / 6);
+  const currentBall = ballsPlayed % 6;
+  const ballsLeft   = MAX_BALLS - ballsPlayed;
+  const strikeRate  = ballsPlayed > 0 ? ((runs / ballsPlayed) * 100).toFixed(1) : '0.0';
+  const canPlay     = phase === 'idle' && !gameOver;
+
+  return (
+    <div className="shell">
+      <div className="masthead">
+        <span className="masthead-title">Mudassir Cricket Erena</span>
+       
+      </div>
+
+      <div className="scorepanel">
+        <div className="score-cell">
+          <span className="sc-label">Score</span>
+          <span className="sc-val">{runs}/{wickets}</span>
+        </div>
+        <div className="score-cell">
+          <span className="sc-label">Overs</span>
+          <span className="sc-val safe">{currentOver}.{currentBall}</span>
+          <div style={{fontSize:'0.6rem',color:'var(--text-muted)',marginTop:2}}>{ballsLeft} balls left</div>
+        </div>
+        <div className="score-cell">
+          <span className="sc-label">Strike Rate</span>
+          <span className="sc-val info" style={{fontSize:'1.5rem'}}>{strikeRate}</span>
+        </div>
+        <div className="score-cell">
+          <span className="sc-label">Wickets</span>
+          <span className="sc-val danger">{wickets}/{MAX_WICKETS}</span>
+        </div>
+      </div>
+
+      <div className="ball-track">
+        <span className="bt-label">Balls</span>
+        <div className="bt-dots">
+          {Array.from({ length: MAX_BALLS }).map((_, i) => (
+            <div key={i} className={`bt-dot ${i < history.length ? history[i] : ''}`}/>
+          ))}
+        </div>
+      </div>
+
+      <div className="scene-frame">
+        <div className="scene-sky"/>
+        <StandsCrowd/>
+        <div className="scene-ground">
+          <div className="ground-grass"/>
+          <div className="ground-pitch"/>
+          <div className="ground-crease"/>
+          <WicketsSet offsetX="calc(50% + 6px)" bottomPx={18} scale={1}/>
+          <WicketsSet offsetX="calc(50% - 32px)" bottomPx={52} scale={0.75}/>
+          <div
+            className="cricket-ball"
+            style={{
+              left: `${ballX}%`,
+              top:  `${ballY}%`,
+            }}
+          />
+          <BatsmanFigure hitting={hitting}/>
+        </div>
+        {flash && (
+          <div key={flashKey} className={`outcome-flash ${flash.cls}`}>
+            {flash.label}
+          </div>
+        )}
+      </div>
+
+      <div className="commentary-strip">{commentary}</div>
+
+      <div className="controls-block">
+        <div className="style-row">
+          <button
+            className={`style-tile agg ${style === 'agg' ? 'selected' : ''}`}
+            onClick={() => canPlay && setStyle('agg')}
+            disabled={!canPlay}
+          >
+            AGGRESSIVE
+            <span className="tile-sub">High risk — High reward — W 40%</span>
+          </button>
+          <button
+            className={`style-tile def ${style === 'def' ? 'selected' : ''}`}
+            onClick={() => canPlay && setStyle('def')}
+            disabled={!canPlay}
+          >
+            DEFENSIVE
+            <span className="tile-sub">Low risk — Low reward — W 15%</span>
+          </button>
+        </div>
+
+        <div className="powerbar-wrap">
+          <div className="pb-header">
+            <span className="pb-title">POWER BAR</span>
+            <span className="pb-pos">Position: {sliderPos.toFixed(3)}</span>
+          </div>
+          <PowerBarDisplay segs={segs} sliderPos={sliderPos}/>
+          <div className="pb-ticks">
+            <span className="pb-tick" style={{left:'0%'}}>0</span>
+            {segs.map((s, i) => (
+              <span key={i} className="pb-tick" style={{left:(s.end * 100) + '%'}}>
+                {s.end.toFixed(2)}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="action-row">
+          <button className="btn-play" onClick={handlePlayShot} disabled={!canPlay}>
+            {phase === 'bowling' ? 'BOWLING...' : 'PLAY SHOT'}
+          </button>
+          <button className="btn-restart" onClick={handleRestart}>
+            RESTART
+          </button>
+        </div>
+      </div>
+
+      <div className="statusline">
+        <span>Mode: {style === 'agg' ? 'Aggressive' : 'Defensive'}</span>
+        <span>Slider: {sliderPos.toFixed(3)}</span>
+        <span>Ball {Math.min(ballsPlayed + 1, MAX_BALLS)} / {MAX_BALLS}</span>
+      </div>
+
+      {gameOver && (
+        <div className="gameover-veil">
+          <div className="gameover-panel">
+            <div className="go-heading">INNINGS OVER</div>
+            <div className="go-reason">{goReason}</div>
+            <div className="go-grid">
+              <div className="go-stat">
+                <span className="go-stat-label">Total Runs</span>
+                <span className="go-stat-val">{runs}</span>
+              </div>
+              <div className="go-stat">
+                <span className="go-stat-label">Wickets</span>
+                <span className="go-stat-val">{wickets}/{MAX_WICKETS}</span>
+              </div>
+              <div className="go-stat">
+                <span className="go-stat-label">Balls Faced</span>
+                <span className="go-stat-val">{ballsPlayed}</span>
+              </div>
+              <div className="go-stat">
+                <span className="go-stat-label">Strike Rate</span>
+                <span className="go-stat-val">{strikeRate}</span>
+              </div>
+            </div>
+            <div className="go-rating">{rateInnings(runs, ballsPlayed)}</div>
+            <button className="go-restart" onClick={handleRestart}>
+              PLAY AGAIN
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
